@@ -21,7 +21,21 @@
         <!--Whenever scripting in JSX, you must add attribute type="text/babel" to translate to javascript-->
         <script type="text/babel">
 
-         class Player1 extends React.Component {
+         class Player extends React.Component {
+            constructor(props) {
+               super(props);
+
+               this.state = {
+                  boats: new Map(),
+                  hits: new Set(),
+
+                  L_life: 4,
+                  Box_life: 4,
+                  Line1_Life: 4,
+                  Line2_Life: 4
+               };
+            }
+
             render() {
                const gridItems = [];
                const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -35,7 +49,8 @@
                   gridItems.push(<div class="header-row">{letters[i]}</div>)
                   for (let j = 0; j < 8; j++) {
                      if (this.props.mode == "player") {
-                        gridItems.push(<button class="button-grid" disabled="true"></button>)
+                        const offset = 8*i + j
+                        gridItems.push(<button class="button-grid" disabled="true">{this.state.boats.get(offset)}</button>)
 
                      } else if (this.props.mode == "opponent") {
                         gridItems.push(<button class="button-grid"></button>)
@@ -49,6 +64,41 @@
                   </div>
                )
             }
+         }
+
+         class Player1 extends Player {
+            constructor(props) {
+               super(props);
+
+               const newBoats = this.state.boats;
+               newBoats.set(0, 'L')
+               newBoats.set(8, 'L')
+               newBoats.set(16, 'L')
+               newBoats.set(17, 'L')
+
+               newBoats.set(54, 'Box')
+               newBoats.set(55, 'Box')
+               newBoats.set(62, 'Box')
+               newBoats.set(63, 'Box') 
+
+               newBoats.set(3, 'Line1')
+               newBoats.set(11, 'Line1')
+               newBoats.set(19, 'Line1')
+               newBoats.set(27, 'Line1')
+
+               newBoats.set(33, 'Line2')
+               newBoats.set(41, 'Line2')
+               newBoats.set(49, 'Line2')
+               newBoats.set(57, 'Line2')
+               
+               this.setState(({ boats }) => ({
+                  boats: newBoats
+               }))
+            }
+         }
+
+         class Player2 extends Player {
+
          }
         
          class App extends React.Component {
