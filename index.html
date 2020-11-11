@@ -4,205 +4,77 @@
         <title>Battleship</title>
 		<link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap">
+
+        <!--React is the main library-->
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+
+        <!--ReactDOM is a special package that allows us to take react components-->
+        <!--and insert into the Document Object Model (DOM)-->
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+        <!--Babel translates JSX into javascript-->
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     </head>
     <body>
-        <h1 class = "title">Battleship</h1>
+        <div id="app"></div>
 
-        <div id="container">
-			<div>
-                <h2>Your grid (P1)</h2>
-                <hr>
-                <div class="grid">
-                    <div></div>
-                    <div class="header-column">1</div>
-                    <div class="header-column">2</div>
-                    <div class="header-column">3</div>
-                    <div class="header-column">4</div>
-                    <div class="header-column">5</div>
-                    <div class="header-column">6</div>
-                    <div class="header-column">7</div>
-                    <div class="header-column">8</div>
+        <!--Whenever scripting in JSX, you must add attribute type="text/babel" to translate to javascript-->
+        <script type="text/babel">
 
-                    <div class="header-row">A</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
+         class Player1 extends React.Component {
+            render() {
+               const gridItems = [];
+               const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-                    <div class="header-row">B</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
+               gridItems.push(<div />)
+               for (let i = 0; i < 8; i++) {
+                     gridItems.push(<div class="header-column">{i+1}</div>)
+               }
 
-                    <div class="header-row">C</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
+               for (let i = 0; i < 8; i++) {
+                  gridItems.push(<div class="header-row">{letters[i]}</div>)
+                  for (let j = 0; j < 8; j++) {
+                     if (this.props.mode == "player") {
+                        gridItems.push(<button class="button-grid" disabled="true"></button>)
 
-                    <div class="header-row">C</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
+                     } else if (this.props.mode == "opponent") {
+                        gridItems.push(<button class="button-grid"></button>)
+                     }
+                  }
+               }
+               
+               return (
+                  <div class="grid">
+                     {gridItems}
+                  </div>
+               )
+            }
+         }
+        
+         class App extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <h1 class = "title">Battleship</h1>
+                        <div id="container">
+                            <div>
+                                <h2>Your grid (P1)</h2>
+                                <hr />
+                                <Player1 mode="player"/>
+                            </div>
+                            <div>
+                                <h2>Opponent (P2)</h2>
+                                <hr />
+                                <Player1 mode="opponent" />
+                            </div>
+                            <button class="button-big">End Turn</button>
+                        </div>
+                    </div>
+                );
+            }
+        }
 
-                    <div class="header-row">E</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-
-                    <div class="header-row">F</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-
-                    <div class="header-row">G</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-
-                    <div class="header-row">H</div>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-                    <button class="button-grid" disabled="true"></button>
-
-
-                </div>
-            </div>
-			<div>
-                <h2>Opponent (P2)</h2>
-                <hr>
-                <div class="grid">
-                    <div></div>
-                    <div class="header-column">1</div>
-                    <div class="header-column">2</div>
-                    <div class="header-column">3</div>
-                    <div class="header-column">4</div>
-                    <div class="header-column">5</div>
-                    <div class="header-column">6</div>
-                    <div class="header-column">7</div>
-                    <div class="header-column">8</div>
-
-                    <div class="header-row">A</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">B</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">C</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">D</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">E</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">F</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">G</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    
-                    <div class="header-row">H</div>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-                    <button class="button-grid"></button>
-
-                </div>
-            </div>
-            <button class="button-big">End Turn</button>
-        </div>
+        ReactDOM.render(<App />, document.querySelector('#app'));
+        </script>
     </body>
 </html>
