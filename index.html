@@ -2,5 +2,291 @@
 <html lang="en">
     <head>
         <title>Battleship</title>
+        <style>
+            .title {
+                font-family: 'Roboto', sans-serif;
+                border: 1px solid black;
+                border-radius: 12px;
+            	width: 300px;
+            	padding: 16px;
+            	margin-left: auto;
+            	margin-right: auto;
+            	text-align: center;
+            }
+            
+            #container {
+	            display: flex;
+                flex-wrap: wrap;
+                width: 1440px;
+                margin: auto;
+            }
+
+            #container > div {
+                background-color: #CBCBCB;
+                border-radius: 6px;
+            	font-size: 20px;
+            	margin: 20px;
+            	padding: 20px;
+                width: 45%;
+                padding: 20px;
+                margin: auto;
+                margin-bottom: 25px;
+                text-align: center;
+            }
+
+            #container > div > h2, h3, h4 {
+                font-family: 'Roboto', sans-serif;
+	            line-height: 4px;
+            }
+
+            .button-big {
+    	        width: 200px;
+    	        height: 50px;
+            	font-family: 'Roboto', sans-serif;
+            	font-size: 20px;
+            	font-weight: bold;
+            	border-radius: 23px;
+            	color: white;
+            	background-color: #77D6FF;
+                outline: none;
+            	margin-left: auto;
+            	margin-right: auto;
+            }
+
+            .button-big:hover {
+                background-color: #3FC5FF;
+            }
+
+            .button-big:active {
+                background-color: #1CBAFF;
+            }
+
+            .grid {
+                background-color: white;
+                display: grid;
+                padding: 20px 10px;
+                border-radius: 6px;
+                grid-column-gap: 2px;
+                grid-row-gap: 2px;
+                grid-template-columns: 30px repeat(8, 70px);
+                grid-template-rows: 30px repeat(8, 70px);
+            }
+
+            .button-grid {
+
+            }
+
+            .header-row {
+                font-family: 'Roboto', sans-serif;
+                font-size: 20px;
+                padding: 20px 0;
+            }
+
+            .header-column {
+                font-family: 'Roboto', sans-serif;
+                font-size: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap">
     </head>
+    <body>
+        <h1 class = "title">Battleship</h1>
+
+        <div id="container">
+			<div>
+                <h2>Your grid (P1)</h2>
+                <hr>
+                <div class="grid">
+                    <div></div>
+                    <div class="header-column">1</div>
+                    <div class="header-column">2</div>
+                    <div class="header-column">3</div>
+                    <div class="header-column">4</div>
+                    <div class="header-column">5</div>
+                    <div class="header-column">6</div>
+                    <div class="header-column">7</div>
+                    <div class="header-column">8</div>
+
+                    <div class="header-row">A</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">B</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">C</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">C</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">E</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">F</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">G</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+                    <div class="header-row">H</div>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+                    <button class="button-grid" disabled="true"></button>
+
+
+                </div>
+            </div>
+			<div>
+                <h2>Opponent (P2)</h2>
+                <hr>
+                <div class="grid">
+                    <div></div>
+                    <div class="header-column">1</div>
+                    <div class="header-column">2</div>
+                    <div class="header-column">3</div>
+                    <div class="header-column">4</div>
+                    <div class="header-column">5</div>
+                    <div class="header-column">6</div>
+                    <div class="header-column">7</div>
+                    <div class="header-column">8</div>
+
+                    <div class="header-row">A</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">B</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">C</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">D</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">E</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">F</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">G</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    
+                    <div class="header-row">H</div>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+                    <button class="button-grid"></button>
+
+                </div>
+            </div>
+            <button class="button-big">End Turn</button>
+        </div>
+    </body>
 </html>
