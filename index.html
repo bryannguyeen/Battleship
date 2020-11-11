@@ -36,21 +36,42 @@
                };
             }
 
+            getPlayerStyle = (offset) => {
+               const boatColours = {
+                  L: 'orange',
+                  Box: 'yellow',
+                  Line1: 'cyan',
+                  Line2: 'green'
+               }
+
+               let style = {
+                  backgroundColor: boatColours[this.state.boats.get(offset)]
+               }
+
+               return style
+            }
+
             render() {
                const gridItems = [];
                const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
                gridItems.push(<div />)
+               // header for columns
                for (let i = 0; i < 8; i++) {
-                     gridItems.push(<div class="header-column">{i+1}</div>)
+                     gridItems.push(<div className="header-column">{i+1}</div>)
                }
 
                for (let i = 0; i < 8; i++) {
-                  gridItems.push(<div class="header-row">{letters[i]}</div>)
+                  // header for rows
+                  gridItems.push(<div className="header-row">{letters[i]}</div>)
+                  
                   for (let j = 0; j < 8; j++) {
+                     const offset = 8*i + j
+
                      if (this.props.mode == "player") {
-                        const offset = 8*i + j
-                        gridItems.push(<button class="button-grid" disabled="true">{this.state.boats.get(offset)}</button>)
+                        const style = this.getPlayerStyle(offset);
+
+                        gridItems.push(<button class="button-grid" disabled={true} style={style}>{this.state.boats.get(offset)}</button>)
 
                      } else if (this.props.mode == "opponent") {
                         gridItems.push(<button class="button-grid"></button>)
@@ -59,7 +80,7 @@
                }
                
                return (
-                  <div class="grid">
+                  <div className="grid">
                      {gridItems}
                   </div>
                )
@@ -90,10 +111,8 @@
                newBoats.set(41, 'Line2')
                newBoats.set(49, 'Line2')
                newBoats.set(57, 'Line2')
-               
-               this.setState(({ boats }) => ({
-                  boats: newBoats
-               }))
+
+               this.state.boats = newBoats;
             }
          }
 
@@ -105,7 +124,7 @@
             render() {
                 return (
                     <div>
-                        <h1 class = "title">Battleship</h1>
+                        <h1 className="title">Battleship</h1>
                         <div id="container">
                             <div>
                                 <h2>Your grid (P1)</h2>
@@ -117,7 +136,7 @@
                                 <hr />
                                 <Player1 mode="opponent" />
                             </div>
-                            <button class="button-big">End Turn</button>
+                            <button className="button-big">End Turn</button>
                         </div>
                     </div>
                 );
