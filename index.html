@@ -213,8 +213,80 @@
                   }
                },
 
-               gameState: "game"
+               gameState: "lobby"
             };
+
+         }
+
+         resetGame = () => {
+            const boatsP1 = this.generateBoatSet();
+            const boatsP2 = this.generateBoatSet();
+
+            this.setState(state => ({
+               player1Turn: true,
+               endTurn: false,
+
+               player1: {
+                  boats: boatsP1,
+                  hits: new Set(),
+
+                  life: {
+                     L: 4,
+                     Box: 4,
+                     Line1: 4,
+                     Line2: 4
+                  }
+               },
+
+               player2: {
+                  boats: boatsP2,
+                  hits: new Set(),
+
+                  life: {
+                     L: 4,
+                     Box: 4,
+                     Line1: 4,
+                     Line2: 4
+                  }
+               },
+
+               gameState: "lobby"
+            }));
+         }
+
+         loadGame = () => {
+            const saveState = JSON.parse(localStorage.getItem("state"))
+
+            this.setState(state => ({
+               player1Turn: saveState.player1Turn,
+               endTurn: saveState.endTurn,
+
+               player1: {
+                  boats: new Map(saveState.player1.boats),
+                  hits: new Set(saveState.player1.hits),
+
+                  life: {
+                     L: saveState.player1.life.L,
+                     Box: saveState.player1.life.Box,
+                     Line1: saveState.player1.life.Line1,
+                     Line2: saveState.player1.life.Line2
+                  }
+               },
+
+               player2: {
+                  boats: new Map(saveState.player2.boats),
+                  hits: new Set(saveState.player2.hits),
+
+                  life: {
+                     L: saveState.player2.life.L,
+                     Box: saveState.player2.life.Box,
+                     Line1: saveState.player2.life.Line1,
+                     Line2: saveState.player2.life.Line2
+                  }
+               },
+
+               gameState: saveState.gameState
+            }));
          }
 
          generateBoatSet() {
@@ -225,7 +297,6 @@
 
             // generating L boat
             orientation = Math.floor(Math.random() * 4)
-            console.log(orientation)
             if (orientation == 0 || orientation == 2) {
                row = Math.floor(Math.random() * 6)
                column = Math.floor(Math.random() * 7)
@@ -335,7 +406,7 @@
                   // Give each button a unique auto-increment value to identify
                   // If a given button has already been hit, don't give ability to hit it again
                   gridItems.push(
-                     <button className="button-grid" disabled={hit || this.state.endTurn} onClick={() => this.registerHit(offset, playerID)}>
+                     <button className="button-grid" disabled={hit || this.state.endTurn || this.state.gameState != "game"} onClick={() => this.registerHit(offset, playerID)}>
                         {icon}
                      </button>)
                }
@@ -396,6 +467,10 @@
 
          render() {
             const gameState = this.state.gameState;
+            if (gameState == "lobby") {
+               return this.lobby()
+            }
+
             if (gameState == "game") {
                return this.mainGame()
             }
@@ -407,6 +482,16 @@
             if (gameState == "game over") {
                return this.gameOver()
             }
+         }
+
+         lobby() {
+            return (
+               <div>
+                  <h1 className="title">Battleship</h1>
+                  <button className="button-big" onClick={this.startGame}>Start Game</button>
+                  <button className="button-big" disabled={!localStorage.getItem("state")} onClick={this.loadGame}>Resume Game</button>
+               </div>
+            )
          }
 
          mainGame() {
@@ -479,9 +564,17 @@
                      <h2>{this.state.winner} is the winner!</h2>
                   </div>
                   <Statistics p1={this.state.player1} p2={this.state.player2} />
+                  <button className="button-big" onClick={this.resetGame}>Play Again</button>
+                  <br />
                   {main}
                </div>
             )
+         }
+
+         startGame = () => {
+            this.setState(state => ({
+               gameState: "game"
+            }))
          }
 
          switchTurns = () => {
@@ -489,7 +582,20 @@
                player1Turn: !state.player1Turn,
                endTurn: false,
                gameState: "transition"
-            }));
+            }), () => {
+               // Save game to local storage after every end-turn
+               const saveState = JSON.parse(JSON.stringify(this.state))
+
+               // Since JSON does not support maps and sets, convert them to arrays
+               saveState.player1.boats = Array.from(this.state.player1.boats.entries())
+               saveState.player1.hits = Array.from(this.state.player1.hits)
+
+               saveState.player2.boats = Array.from(this.state.player2.boats.entries())
+               saveState.player2.hits = Array.from(this.state.player2.hits)
+
+
+               localStorage.setItem("state", JSON.stringify(saveState))
+            });
          }
 
          proceedTransition = () => {
