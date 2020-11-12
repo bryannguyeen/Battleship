@@ -131,30 +131,59 @@
          }
       }
 
+      class Statistics extends React.Component {
+         render() {
+            const p1 = this.props.p1;
+            const p2 = this.props.p2;
+
+            const p1Stats = []
+            const p2Stats = []
+
+
+            p1Stats.push(<div>Total shots fired: {p2.hits.size}</div>)
+            p2Stats.push(<div>Total shots fired: {p1.hits.size}</div>)
+
+            var p1SunkenShips = 0
+            for (const [key, value] of Object.entries(p1.life)) {
+               if (value == 0) {
+                  p1SunkenShips++;
+               }
+            }
+
+            var p2SunkenShips = 0
+            for (const [key, value] of Object.entries(p2.life)) {
+               if (value == 0) {
+                  p2SunkenShips++;
+               }
+            }
+
+            p1Stats.push(<div>Ships sunk: {p2SunkenShips} </div>)
+            p2Stats.push(<div>Ships sunk: {p1SunkenShips} </div>)
+
+
+            return (
+               <div id="container2">
+                  <div>
+                     <h1>Player 1</h1>
+                     <hr />
+                     {p1Stats}
+                  </div>
+                  <div>
+                     <h1>Player 2</h1>
+                     <hr />
+                     {p2Stats}
+                     </div>
+               </div>
+            )
+         }
+      }
+
       class App extends React.Component {
          constructor(props) {
             super(props);
 
-            const boatsP1 = new Map();
-            boatsP1.set(0, 'L')
-            boatsP1.set(8, 'L')
-            boatsP1.set(16, 'L')
-            boatsP1.set(17, 'L')
-
-            boatsP1.set(54, 'Box')
-            boatsP1.set(55, 'Box')
-            boatsP1.set(62, 'Box')
-            boatsP1.set(63, 'Box')
-
-            boatsP1.set(3, 'Line1')
-            boatsP1.set(11, 'Line1')
-            boatsP1.set(19, 'Line1')
-            boatsP1.set(27, 'Line1')
-
-            boatsP1.set(33, 'Line2')
-            boatsP1.set(41, 'Line2')
-            boatsP1.set(49, 'Line2')
-            boatsP1.set(57, 'Line2')
+            const boatsP1 = this.generateBoatSet();
+            const boatsP2 = this.generateBoatSet();
 
             this.state = {
                player1Turn: true,
@@ -173,7 +202,7 @@
                },
 
                player2: {
-                  boats: boatsP1,
+                  boats: boatsP2,
                   hits: new Set(),
 
                   life: {
@@ -186,6 +215,57 @@
 
                gameState: "game"
             };
+         }
+
+         generateBoatSet() {
+            const boats = new Map();
+
+            // generating L boat
+            var row = Math.floor(Math.random() * 6)
+            var column = Math.floor(Math.random() * 7)
+
+            boats.set(8 * row + column, 'L')
+            boats.set(8 * (row + 1) + column, 'L')
+            boats.set(8 * (row + 2) + column, 'L')
+            boats.set(8 * (row + 2) + column + 1, 'L')
+
+            // generating box boat
+            row = Math.floor(Math.random() * 7)
+            column = Math.floor(Math.random() * 7)
+            while (boats.has(8 * row + column) || boats.has(8 * (row + 1) + column) || boats.has(8 * row + (column + 1)) || boats.has(8 * (row + 1) + (column + 1))) {
+               row = Math.floor(Math.random() * 7)
+               column = Math.floor(Math.random() * 7)
+            }
+            boats.set(8 * row + column, 'Box')
+            boats.set(8 * (row +1) + column, 'Box')
+            boats.set(8 * row + (column + 1), 'Box')
+            boats.set(8 * (row + 1) + (column + 1), 'Box')
+
+            // generating first line boat
+            row = Math.floor(Math.random() * 5)
+            column = Math.floor(Math.random() * 8)
+            while (boats.has(8 * row + column) || boats.has(8 * (row + 1) + column) || boats.has(8 * (row + 2) + column) || boats.has(8 * (row + 3) + column)) {
+               row = Math.floor(Math.random() * 5)
+               column = Math.floor(Math.random() * 8)
+            }
+            boats.set(8 * row + column, 'Line1')
+            boats.set(8 * (row + 1) + column, 'Line1')
+            boats.set(8 * (row + 2) + column, 'Line1')
+            boats.set(8 * (row + 3) + column, 'Line1')
+
+            // generating second line boat
+            row = Math.floor(Math.random() * 5)
+            column = Math.floor(Math.random() * 8)
+            while (boats.has(8 * row + column) || boats.has(8 * (row + 1) + column) || boats.has(8 * (row + 2) + column) || boats.has(8 * (row + 3) + column)) {
+               row = Math.floor(Math.random() * 5)
+               column = Math.floor(Math.random() * 8)
+            }
+            boats.set(8 * row + column, 'Line2')
+            boats.set(8 * (row + 1) + column, 'Line2')
+            boats.set(8 * (row + 2) + column, 'Line2')
+            boats.set(8 * (row + 3) + column, 'Line2')
+
+            return boats
          }
 
          grid(playerID, mode) {
@@ -258,7 +338,6 @@
                }), () => {
                // Check to see if player has any remaining boats after a successful hit
                const playerHealth = this.state[playerID].life
-               console.log(playerHealth)
                if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
                   var winner;
                   if (playerID == "player1") {
@@ -282,15 +361,22 @@
 
          render() {
             const gameState = this.state.gameState;
-            if (gameState == "game" || gameState) {
+            if (gameState == "game") {
                return this.mainGame()
+            }
+
+            if (gameState == "transition") {
+               return this.transition()
+            }
+
+            if (gameState == "game over") {
+               return this.gameOver()
             }
          }
 
          mainGame() {
             return (
                <div>
-                  <h1 className="title">Battleship</h1>
                   <div id="container">
                      <div>
                         <h2>Your grid ({this.state.player1Turn ? 'P1' : 'P2'})</h2>
@@ -325,26 +411,57 @@
                         }
                      </div>
                   </div>
-                  {(this.state.gameState == "game over")
-                     ?
-                     <div className="title">
-                        <h1>GAME OVER</h1>
-                        <h2>{this.state.winner} is the winner!</h2>
-                     </div>
-                     :
-                     <button className="button-big" disabled={!this.state.endTurn && this.state.gameState == "game"} onClick={this.switchTurns}>End Turn</button>
-                     }
+
+                  <button className="button-big" disabled={!this.state.endTurn || this.state.gameState != "game"} onClick={this.switchTurns}>End Turn</button>
+
                </div>
             );
+         }
+
+         transition() {
+            var nextPlayer;
+            if (this.state.player1Turn) {
+               nextPlayer = "Player 1"
+            } else {
+               nextPlayer = "Player 2"
+            }
+            return (
+               <div className="title">
+                  <h1>{nextPlayer}'s turn</h1>
+                  <h2>Pass the screen to {nextPlayer} and press to proceed</h2>
+
+                  <button className="button-big" onClick={this.proceedTransition}>Continue</button>
+               </div>
+            )
+         }
+
+         gameOver() {
+            const main = this.mainGame()
+            return (
+               <div>
+                  <div className="title">
+                     <h1>GAME OVER</h1>
+                     <h2>{this.state.winner} is the winner!</h2>
+                  </div>
+                  <Statistics p1={this.state.player1} p2={this.state.player2} />
+                  {main}
+               </div>
+            )
          }
 
          switchTurns = () => {
             this.setState(state => ({
                player1Turn: !state.player1Turn,
-               endTurn: false
+               endTurn: false,
+               gameState: "transition"
             }));
          }
 
+         proceedTransition = () => {
+            this.setState(state => ({
+               gameState: "game"
+            }));
+         }
       }
 
       ReactDOM.render(<App />, document.querySelector('#app'));

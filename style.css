@@ -16,9 +16,18 @@
    margin: auto;
 }
 
+#container2 {
+   display: flex;
+   flex-wrap: wrap;
+   width: 1440px;
+   margin: auto;
+}
+
 #container > div {
    background-color: #CBCBCB;
    border-radius: 6px;
+   font-family: 'Roboto', sans-serif;
+   line-height: 4px;
    font-size: 20px;
    margin: 20px;
    padding: 20px;
@@ -29,9 +38,25 @@
    text-align: center;
 }
 
-#container > div > h2, h3, h4 {
+#container2 > div {
+   background-color: #CBCBCB;
+   border-radius: 12px;
    font-family: 'Roboto', sans-serif;
-   line-height: 4px;
+   line-height: 30px;
+   font-size: 24px;
+   margin: 20px;
+   padding: 20px;
+   width: 30%;
+   padding: 20px;
+   margin: auto;
+   margin-top: 40px;
+   margin-bottom: 25px;
+   text-align: center;
+}
+
+#container2 > div > div {
+   background-color: #CBCBCB;
+   text-align: center;
 }
 
 
@@ -77,7 +102,8 @@
    outline: none;
    margin: 0 auto;
    display: block;
-   margin-bottom: 100px;
+   margin-top: 50px;
+   margin-bottom: 30px;
 }
 
 .button-big:hover {
