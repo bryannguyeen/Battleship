@@ -182,39 +182,76 @@
          constructor(props) {
             super(props);
 
-            const boatsP1 = this.generateBoatSet();
-            const boatsP2 = this.generateBoatSet();
+            // If there is a previous game, then load it into the state
+            const saveState = JSON.parse(localStorage.getItem("state"))
+            if (saveState) {
+               this.state = {
+                  player1Turn: saveState.player1Turn,
+                  endTurn: saveState.endTurn,
 
-            this.state = {
-               player1Turn: true,
-               endTurn: false,
+                  player1: {
+                     boats: new Map(saveState.player1.boats),
+                     hits: new Set(saveState.player1.hits),
 
-               player1: {
-                  boats: boatsP1,
-                  hits: new Set(),
+                     life: {
+                        L: saveState.player1.life.L,
+                        Box: saveState.player1.life.Box,
+                        Line1: saveState.player1.life.Line1,
+                        Line2: saveState.player1.life.Line2
+                     }
+                  },
 
-                  life: {
-                     L: 4,
-                     Box: 4,
-                     Line1: 4,
-                     Line2: 4
-                  }
-               },
+                  player2: {
+                     boats: new Map(saveState.player2.boats),
+                     hits: new Set(saveState.player2.hits),
 
-               player2: {
-                  boats: boatsP2,
-                  hits: new Set(),
+                     life: {
+                        L: saveState.player2.life.L,
+                        Box: saveState.player2.life.Box,
+                        Line1: saveState.player2.life.Line1,
+                        Line2: saveState.player2.life.Line2
+                     }
+                  },
 
-                  life: {
-                     L: 4,
-                     Box: 4,
-                     Line1: 4,
-                     Line2: 4
-                  }
-               },
+                  gameState: saveState.gameState
+               }
 
-               gameState: "lobby"
-            };
+            } else {
+               // otherwise create a new state
+               const boatsP1 = this.generateBoatSet();
+               const boatsP2 = this.generateBoatSet();
+
+               this.state = {
+                  player1Turn: true,
+                  endTurn: false,
+
+                  player1: {
+                     boats: boatsP1,
+                     hits: new Set(),
+
+                     life: {
+                        L: 4,
+                        Box: 4,
+                        Line1: 4,
+                        Line2: 4
+                     }
+                  },
+
+                  player2: {
+                     boats: boatsP2,
+                     hits: new Set(),
+
+                     life: {
+                        L: 4,
+                        Box: 4,
+                        Line1: 4,
+                        Line2: 4
+                     }
+                  },
+
+                  gameState: "lobby"
+               };
+            }
 
          }
 
@@ -222,6 +259,8 @@
             const boatsP1 = this.generateBoatSet();
             const boatsP2 = this.generateBoatSet();
 
+            localStorage.removeItem("state")
+
             this.setState(state => ({
                player1Turn: true,
                endTurn: false,
@@ -251,41 +290,6 @@
                },
 
                gameState: "lobby"
-            }));
-         }
-
-         loadGame = () => {
-            const saveState = JSON.parse(localStorage.getItem("state"))
-
-            this.setState(state => ({
-               player1Turn: saveState.player1Turn,
-               endTurn: saveState.endTurn,
-
-               player1: {
-                  boats: new Map(saveState.player1.boats),
-                  hits: new Set(saveState.player1.hits),
-
-                  life: {
-                     L: saveState.player1.life.L,
-                     Box: saveState.player1.life.Box,
-                     Line1: saveState.player1.life.Line1,
-                     Line2: saveState.player1.life.Line2
-                  }
-               },
-
-               player2: {
-                  boats: new Map(saveState.player2.boats),
-                  hits: new Set(saveState.player2.hits),
-
-                  life: {
-                     L: saveState.player2.life.L,
-                     Box: saveState.player2.life.Box,
-                     Line1: saveState.player2.life.Line1,
-                     Line2: saveState.player2.life.Line2
-                  }
-               },
-
-               gameState: "transition"
             }));
          }
 
@@ -440,46 +444,51 @@
                   ...state[playerID],
                   hits: new Set(state[playerID].hits).add(offset)
                }
-            }));
+            }), () => {
+               // If a hit shot a boat, decrement its health
+               if (this.state[playerID].boats.has(offset)) {
+                  const boat = this.state[playerID].boats.get(offset)
+                  const boatLife = this.state[playerID].life[boat]
 
-            // If a hit shot a boat, decrement its health
-            if (this.state[playerID].boats.has(offset)) {
-               const boat = this.state[playerID].boats.get(offset)
-               const boatLife = this.state[playerID].life[boat]
-
-               this.setState(state => ({
-                  [playerID]: {
-                     ...state[playerID],
-                     life: {
-                        ...state[playerID].life,
-                        [boat]: boatLife - 1
+                  this.setState(state => ({
+                     [playerID]: {
+                        ...state[playerID],
+                        life: {
+                           ...state[playerID].life,
+                           [boat]: boatLife - 1
+                        }
                      }
-                  }
-               }), () => {
-                  // Check to see if player has any remaining boats after a successful hit
-                  const playerHealth = this.state[playerID].life
-                  if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
-                     var winner;
-                     if (playerID == "player1") {
-                        winner = "Player 2"
+                  }), () => {
+                     // Check to see if player has any remaining boats after a successful hit
+                     const playerHealth = this.state[playerID].life
+                     if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
+                        // remove finished game from localStorage
+                        localStorage.removeItem("state")
+
+                        var winner;
+                        if (playerID == "player1") {
+                           winner = "Player 2"
+                        } else {
+                           winner = "Player 1"
+                        }
+                        this.setState(state => ({
+                           gameState: "game over",
+                           winner: winner
+                        }));
+
                      } else {
-                        winner = "Player 1"
+                        this.saveGame()
                      }
-                     this.setState(state => ({
-                        gameState: "game over",
-                        winner: winner
-                     }));
-
-                     // remove finished game from localStorage
-                     localStorage.removeItem("state")
-                  }
-               });
-            }
+                  });
+               } else {
+                  this.saveGame()
+               }
+            });
 
             // The player picked a tile, so now their turn is over
             this.setState(state => ({
                endTurn: true
-            }));
+            }), this.saveGame);
          }
 
          render() {
@@ -506,7 +515,6 @@
                <div>
                   <h1 className="title">Battleship</h1>
                   <button className="button-big" onClick={this.startGame}>Start Game</button>
-                  <button className="button-big" disabled={!localStorage.getItem("state")} onClick={this.loadGame}>Resume Game</button>
                </div>
             )
          }
@@ -550,6 +558,8 @@
                   </div>
 
                   <button className="button-big" disabled={!this.state.endTurn || this.state.gameState != "game"} onClick={this.switchTurns}>End Turn</button>
+                  <br />
+                  <button className="button-big" onClick={this.resetGame}>Reset Game</button>
 
                </div>
             );
@@ -591,9 +601,7 @@
          startGame = () => {
             this.setState(state => ({
                gameState: "game"
-            }), () => {
-               this.saveGame()
-            })
+            }), this.saveGame)
          }
 
          switchTurns = () => {
@@ -601,15 +609,13 @@
                player1Turn: !state.player1Turn,
                endTurn: false,
                gameState: "transition"
-            }), () => {
-               this.saveGame()
-            });
+            }), this.saveGame);
          }
 
          proceedTransition = () => {
             this.setState(state => ({
                gameState: "game"
-            }));
+            }), this.saveGame);
          }
       }
 
