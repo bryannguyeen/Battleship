@@ -22,7 +22,7 @@
    font-size: 20px;
    margin: 20px;
    padding: 20px;
-   width: 45%;
+   width: 39%;
    padding: 20px;
    margin: auto;
    margin-bottom: 25px;
@@ -42,8 +42,8 @@
    border-radius: 6px;
    grid-column-gap: 2px;
    grid-row-gap: 2px;
-   grid-template-columns: 30px repeat(8, 70px);
-   grid-template-rows: 30px repeat(8, 70px);
+   grid-template-columns: 30px repeat(8, 60px);
+   grid-template-rows: 30px repeat(8, 60px);
 }
 
 .boat-list {
@@ -75,8 +75,8 @@
    color: white;
    background-color: #77D6FF;
    outline: none;
-   margin-left: auto;
-   margin-right: auto;
+   margin: 0 auto;
+   display: block;
    margin-bottom: 100px;
 }
 

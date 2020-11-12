@@ -90,8 +90,8 @@
 
       class BoatList extends React.Component {
          render() {
-            const length = 100
-            const width = 100
+            const length = 50
+            const width = 50
 
             const boatElements = [];
             const imageSource = [];
@@ -182,7 +182,9 @@
                      Line1: 4,
                      Line2: 4
                   }
-               }
+               },
+
+               gameState: "game"
             };
          }
 
@@ -253,7 +255,23 @@
                         [boat]: boatLife - 1
                      }
                   }
-               }))
+               }), () => {
+               // Check to see if player has any remaining boats after a successful hit
+               const playerHealth = this.state[playerID].life
+               console.log(playerHealth)
+               if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
+                  var winner;
+                  if (playerID == "player1") {
+                     winner = "Player 2"
+                  } else {
+                     winner = "Player 1"
+                  }
+                  this.setState(state => ({
+                     gameState: "game over",
+                     winner: winner
+                  }));
+               }
+               });
             }
 
             // The player picked a tile, so now their turn is over
@@ -263,6 +281,13 @@
          }
 
          render() {
+            const gameState = this.state.gameState;
+            if (gameState == "game" || gameState) {
+               return this.mainGame()
+            }
+         }
+
+         mainGame() {
             return (
                <div>
                   <h1 className="title">Battleship</h1>
@@ -299,8 +324,16 @@
                            </div>
                         }
                      </div>
-                     <button className="button-big" disabled={!this.state.endTurn} onClick={this.switchTurns}>End Turn</button>
                   </div>
+                  {(this.state.gameState == "game over")
+                     ?
+                     <div className="title">
+                        <h1>GAME OVER</h1>
+                        <h2>{this.state.winner} is the winner!</h2>
+                     </div>
+                     :
+                     <button className="button-big" disabled={!this.state.endTurn && this.state.gameState == "game"} onClick={this.switchTurns}>End Turn</button>
+                     }
                </div>
             );
          }
