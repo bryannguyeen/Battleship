@@ -438,12 +438,13 @@
          }
 
          registerHit = (offset, playerID) => {
-            // Add hit to set of hits on player's board
+            // Add hit to set of hits on player's board and end the turn
             this.setState(state => ({
                [playerID]: {
                   ...state[playerID],
                   hits: new Set(state[playerID].hits).add(offset)
-               }
+               },
+               endTurn: true
             }), () => {
                // If a hit shot a boat, decrement its health
                if (this.state[playerID].boats.has(offset)) {
@@ -462,9 +463,6 @@
                      // Check to see if player has any remaining boats after a successful hit
                      const playerHealth = this.state[playerID].life
                      if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
-                        // remove finished game from localStorage
-                        localStorage.removeItem("state")
-
                         var winner;
                         if (playerID == "player1") {
                            winner = "Player 2"
@@ -474,7 +472,7 @@
                         this.setState(state => ({
                            gameState: "game over",
                            winner: winner
-                        }));
+                        }), this.saveGame);
 
                      } else {
                         this.saveGame()
@@ -484,11 +482,6 @@
                   this.saveGame()
                }
             });
-
-            // The player picked a tile, so now their turn is over
-            this.setState(state => ({
-               endTurn: true
-            }), this.saveGame);
          }
 
          render() {
