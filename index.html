@@ -1,53 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Battleship</title>
-		<link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap">
 
-        <!--React is the main library-->
-        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<head>
+   <title>Battleship</title>
+   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap">
 
-        <!--ReactDOM is a special package that allows us to take react components-->
-        <!--and insert into the Document Object Model (DOM)-->
-        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+   <!--React is the main library-->
+   <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
 
-        <!--Babel translates JSX into javascript-->
-        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    </head>
-    <body>
-        <div id="app"></div>
+   <!--ReactDOM is a special package that allows us to take react components-->
+   <!--and insert into the Document Object Model (DOM)-->
+   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
-        <!--Whenever scripting in JSX, you must add attribute type="text/babel" to translate to javascript-->
-        <script type="text/babel">
+   <!--Babel translates JSX into javascript-->
+   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
 
-         class Player extends React.Component {
-            constructor(props) {
-               super(props);
+<body>
+   <div id="app"></div>
 
-               const boats = new Map();
-               boats.set(0, 'L')
-               boats.set(8, 'L')
-               boats.set(16, 'L')
-               boats.set(17, 'L')
+   <!--Whenever scripting in JSX, you must add attribute type="text/babel" to translate to javascript-->
+   <script type="text/babel">
 
-               boats.set(54, 'Box')
-               boats.set(55, 'Box')
-               boats.set(62, 'Box')
-               boats.set(63, 'Box') 
+      class StaticGrid extends React.Component {
+         getTileStyle = (offset) => {
+            const boatColours = {
+               L: 'orange',
+               Box: 'yellow',
+               Line1: 'cyan',
+               Line2: 'blue'
+            }
 
-               boats.set(3, 'Line1')
-               boats.set(11, 'Line1')
-               boats.set(19, 'Line1')
-               boats.set(27, 'Line1')
+            let style = {
+               backgroundColor: boatColours[this.props.player.boats.get(offset)]
+            }
 
-               boats.set(33, 'Line2')
-               boats.set(41, 'Line2')
-               boats.set(49, 'Line2')
-               boats.set(57, 'Line2')
+            return style
+         }
 
-               this.state = {
-                  boats: boats,
+         render() {
+            const player = this.props.player
+            const gridItems = [];
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+            gridItems.push(<div />)
+            // Header for columns
+            for (let i = 0; i < 8; i++) {
+               gridItems.push(<div className="header-column">{i + 1}</div>)
+            }
+
+            for (let i = 0; i < 8; i++) {
+               // Header for rows
+               gridItems.push(<div className="header-row">{letters[i]}</div>)
+
+               for (let j = 0; j < 8; j++) {
+                  const offset = 8 * i + j
+
+                  // Check if this square has been hit yet
+                  const hit = player.hits.has(offset)
+
+                  // If it has been hit, check to determine a hit or miss
+                  var icon = null
+                  if (hit) {
+                     if (player.boats.has(offset)) {
+                        icon = <img src="images/kaboom.png" width="90%" height="90%" />
+                     } else {
+                        icon = <img src="images/x.png" width="90%" height="90%" />
+                     }
+                  }
+
+                  // Manipulating style to indicate positions of boats and hits
+                  const style = this.getTileStyle(offset);
+
+                  gridItems.push(
+                     <button className="button-grid" disabled={true} style={style}>
+                        {icon}
+                     </button>)
+               }
+            }
+
+            return (
+               <div className="grid">
+                  {gridItems}
+               </div>
+            )
+         }
+      }
+
+      class BoatList extends React.Component {
+         render() {
+            const length = 100
+            const width = 100
+
+            const boatElements = [];
+            const imageSource = [];
+            const boatLives = this.props.boats
+            if (boatLives.L) {
+               imageSource.push("images/L.png")
+            } else {
+               imageSource.push("images/L crossed.png")
+            }
+
+            if (boatLives.Box) {
+               imageSource.push("images/Box.png")
+            } else {
+               imageSource.push("images/Box crossed.png")
+            }
+
+            if (boatLives.Line1) {
+               imageSource.push("images/Line1.png")
+            } else {
+               imageSource.push("images/Line1 crossed.png")
+            }
+
+            if (boatLives.Line2) {
+               imageSource.push("images/Line2.png")
+            } else {
+               imageSource.push("images/Line2 crossed.png")
+            }
+
+            for (const src of imageSource) {
+               boatElements.push(<img src={src} length={length} width={width} />);
+            }
+            return (
+               <div className="boat-list">
+                  {boatElements}
+               </div>
+            )
+         }
+      }
+
+      class App extends React.Component {
+         constructor(props) {
+            super(props);
+
+            const boatsP1 = new Map();
+            boatsP1.set(0, 'L')
+            boatsP1.set(8, 'L')
+            boatsP1.set(16, 'L')
+            boatsP1.set(17, 'L')
+
+            boatsP1.set(54, 'Box')
+            boatsP1.set(55, 'Box')
+            boatsP1.set(62, 'Box')
+            boatsP1.set(63, 'Box')
+
+            boatsP1.set(3, 'Line1')
+            boatsP1.set(11, 'Line1')
+            boatsP1.set(19, 'Line1')
+            boatsP1.set(27, 'Line1')
+
+            boatsP1.set(33, 'Line2')
+            boatsP1.set(41, 'Line2')
+            boatsP1.set(49, 'Line2')
+            boatsP1.set(57, 'Line2')
+
+            this.state = {
+               player1Turn: true,
+               endTurn: false,
+
+               player1: {
+                  boats: boatsP1,
                   hits: new Set(),
 
                   life: {
@@ -56,305 +170,152 @@
                      Line1: 4,
                      Line2: 4
                   }
-               };
-            }
+               },
 
-            getPlayerStyle = (offset) => {
-               const boatColours = {
-                  L: 'orange',
-                  Box: 'yellow',
-                  Line1: 'cyan',
-                  Line2: 'green'
-               }
+               player2: {
+                  boats: boatsP1,
+                  hits: new Set(),
 
-               let style = {
-                  backgroundColor: boatColours[this.state.boats.get(offset)]
-               }
-
-               return style
-            }
-
-            render(mode) {
-               const gridItems = [];
-               const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
-               gridItems.push(<div />)
-               // Header for columns
-               for (let i = 0; i < 8; i++) {
-                     gridItems.push(<div className="header-column">{i+1}</div>)
-               }
-
-               for (let i = 0; i < 8; i++) {
-                  // Header for rows
-                  gridItems.push(<div className="header-row">{letters[i]}</div>)
-                  
-                  for (let j = 0; j < 8; j++) {
-                     const offset = 8*i + j
-                     
-                     // Check if this square has been hit yet
-                     const hit = this.state.hits.has(offset)
-
-                     // If it has been hit, check to determine a hit or miss
-                     var icon = null
-                     if (hit) {
-                        if (this.state.boats.has(offset)) {
-                           icon = <img src="images/kaboom.png" width="90%" height="90%" />
-                        } else {
-                           icon = <img src="images/x.png" width="90%" height="90%" />
-                        }
-                     }
-
-                     if (mode == "player") {
-                        // Manipulating style to indicate positions of boats and hits
-                        const style = this.getPlayerStyle(offset);
-
-                        gridItems.push(
-                           <button className="button-grid" disabled={true} style={style}>
-                              {icon}
-                           </button>)
-
-                     } else if (mode == "opponent") {
-                        // Give each button a unique auto-increment value to identify
-                        // If a given button has already been hit, don't give ability to hit it again
-                        gridItems.push(
-                           <button className="button-grid" disabled={hit} value={offset} onClick={this.registerHit}>
-                              {icon}
-                           </button>)
-                     }
+                  life: {
+                     L: 4,
+                     Box: 4,
+                     Line1: 4,
+                     Line2: 4
                   }
                }
-               
-               return (
-                  <div className="grid">
-                     {gridItems}
-                  </div>
-               )
-            }
-
-            registerHit = (event) => {
-               console.log("hit!")
-               const offset = parseInt(event.target.value)
-
-               // Add hit to set of hits on player's board
-               this.setState(({ hits }) => ({
-                  hits: new Set(hits).add(offset)
-               }));
-
-               // If a hit shot a boat, decrement its health
-               if (this.state.boats.has(offset)) {
-                  const boat = this.state.boats.get(offset)
-                  const boatLife = this.state.life[boat]
-
-                  this.setState(state => ({
-                     life: {
-                        ...state.life,
-                        [boat]: boatLife - 1
-                     }
-                  }))
-               }
-            }
+            };
          }
-        
-         class App extends React.Component {
-            player1 = <Player />
-            player2 = <Player />
 
-            constructor(props) {
-               super(props);
+         grid(playerID, mode) {
+            const gridItems = [];
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-               const boatsP1 = new Map();
-               boatsP1.set(0, 'L')
-               boatsP1.set(8, 'L')
-               boatsP1.set(16, 'L')
-               boatsP1.set(17, 'L')
+            gridItems.push(<div />)
+            // Header for columns
+            for (let i = 0; i < 8; i++) {
+               gridItems.push(<div className="header-column">{i + 1}</div>)
+            }
 
-               boatsP1.set(54, 'Box')
-               boatsP1.set(55, 'Box')
-               boatsP1.set(62, 'Box')
-               boatsP1.set(63, 'Box') 
+            for (let i = 0; i < 8; i++) {
+               // Header for rows
+               gridItems.push(<div className="header-row">{letters[i]}</div>)
 
-               boatsP1.set(3, 'Line1')
-               boatsP1.set(11, 'Line1')
-               boatsP1.set(19, 'Line1')
-               boatsP1.set(27, 'Line1')
+               for (let j = 0; j < 8; j++) {
+                  const offset = 8 * i + j
 
-               boatsP1.set(33, 'Line2')
-               boatsP1.set(41, 'Line2')
-               boatsP1.set(49, 'Line2')
-               boatsP1.set(57, 'Line2')
+                  // Check if this square has been hit yet
+                  const hit = this.state[playerID].hits.has(offset)
 
-               this.state = {
-                  player1Turn: true,
-                  endTurn: false,
-
-                  player1: {
-                     boats: boatsP1,
-                     hits: new Set(),
-
-                     life: {
-                        L: 4,
-                        Box: 4,
-                        Line1: 4,
-                        Line2: 4
-                     }
-                  },
-
-                  player2: {
-                     boats: boatsP1,
-                     hits: new Set(),
-
-                     life: {
-                        L: 4,
-                        Box: 4,
-                        Line1: 4,
-                        Line2: 4
+                  // If it has been hit, check to determine a hit or miss
+                  var icon = null
+                  if (hit) {
+                     if (this.state[playerID].boats.has(offset)) {
+                        icon = <img src="images/kaboom.png" width="90%" height="90%" />
+                     } else {
+                        icon = <img src="images/x.png" width="90%" height="90%" />
                      }
                   }
-               };
+                  // Give each button a unique auto-increment value to identify
+                  // If a given button has already been hit, don't give ability to hit it again
+                  gridItems.push(
+                     <button className="button-grid" disabled={hit || this.state.endTurn} onClick={() => this.registerHit(offset, playerID)}>
+                        {icon}
+                     </button>)
+               }
             }
 
-            getPlayerStyle = (playerID, offset) => {
-               const boatColours = {
-                  L: 'orange',
-                  Box: 'yellow',
-                  Line1: 'cyan',
-                  Line2: 'green'
+            return (
+               <div className="grid">
+                  {gridItems}
+               </div>
+            )
+         }
+
+         registerHit = (offset, playerID) => {
+            // Add hit to set of hits on player's board
+            this.setState(state => ({
+               [playerID]: {
+                  ...state[playerID],
+                  hits: new Set(state[playerID].hits).add(offset)
                }
+            }));
 
-               let style = {
-                  backgroundColor: boatColours[this.state[playerID].boats.get(offset)]
-               }
+            // If a hit shot a boat, decrement its health
+            if (this.state[playerID].boats.has(offset)) {
+               const boat = this.state[playerID].boats.get(offset)
+               const boatLife = this.state[playerID].life[boat]
 
-               return style
-            }
-
-            grid(playerID, mode) {
-               const gridItems = [];
-               const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
-               gridItems.push(<div />)
-               // Header for columns
-               for (let i = 0; i < 8; i++) {
-                     gridItems.push(<div className="header-column">{i+1}</div>)
-               }
-
-               for (let i = 0; i < 8; i++) {
-                  // Header for rows
-                  gridItems.push(<div className="header-row">{letters[i]}</div>)
-                  
-                  for (let j = 0; j < 8; j++) {
-                     const offset = 8*i + j
-                     
-                     // Check if this square has been hit yet
-                     const hit = this.state[playerID].hits.has(offset)
-
-                     // If it has been hit, check to determine a hit or miss
-                     var icon = null
-                     if (hit) {
-                        if (this.state[playerID].boats.has(offset)) {
-                           icon = <img src="images/kaboom.png" width="90%" height="90%" />
-                        } else {
-                           icon = <img src="images/x.png" width="90%" height="90%" />
-                        }
-                     }
-
-                     if (mode == "player") {
-                        // Manipulating style to indicate positions of boats and hits
-                        const style = this.getPlayerStyle(playerID, offset);
-
-                        gridItems.push(
-                           <button className="button-grid" disabled={true} style={style}>
-                              {icon}
-                           </button>)
-
-                     } else if (mode == "opponent") {
-                        // Give each button a unique auto-increment value to identify
-                        // If a given button has already been hit, don't give ability to hit it again
-                        gridItems.push(
-                           <button className="button-grid" disabled={hit || this.state.endTurn} onClick={() => this.registerHit(offset, playerID)}>
-                              {icon}
-                           </button>)
-                     }
-                  }
-               }
-               
-               return (
-                  <div className="grid">
-                     {gridItems}
-                  </div>
-               )
-            }
-
-            registerHit = (offset, playerID) => {
-               // Add hit to set of hits on player's board
                this.setState(state => ({
                   [playerID]: {
                      ...state[playerID],
-                     hits: new Set(state[playerID].hits).add(offset)
-                  }
-               }));
-
-               // If a hit shot a boat, decrement its health
-               if (this.state[playerID].boats.has(offset)) {
-                  const boat = this.state[playerID].boats.get(offset)
-                  const boatLife = this.state[playerID].life[boat]
-
-                  this.setState(state => ({
-                     [playerID]: {
-                        ...state[playerID],
-                        life: {
-                           ...state[playerID].life,
-                           [boat]: boatLife - 1
-                        }
+                     life: {
+                        ...state[playerID].life,
+                        [boat]: boatLife - 1
                      }
-                  }))
-
-                  console.log(this.state[playerID].life)
-               }
-
-               // The player picked a tile, so now their turn is over
-               this.setState(state => ({
-                  endTurn: true
-               }));
+                  }
+               }))
             }
 
-            render() {
-                return (
-                    <div>
-                        <h1 className="title">Battleship</h1>
-                        <div id="container">
-                            <div>
-                                <h2>Your grid ({this.state.player1Turn ? 'P1': 'P2'})</h2>
-                                <hr />
-                                {this.state.player1Turn
-                                ? this.grid('player1', "player")
-                                : this.grid('player2', "player")
-                                }
-                            </div>
-                            <div>
-                                <h2>Opponent ({this.state.player1Turn ? 'P2': 'P1'})</h2>
-                                <hr />
-                                {this.state.player1Turn
-                                ? this.grid('player2', "opponent")
-                                : this.grid('player1', "opponent")
-                                }
-                            </div>
-                            <button className="button-big" disabled={!this.state.endTurn} onClick={this.switchTurns}>End Turn</button>
-                        </div>
-                    </div>
-                );
-            }
-            
-            switchTurns = () => {
-               this.setState(state => ({
-                  player1Turn: !state.player1Turn,
-                  endTurn: false
-               }));
-            }
+            // The player picked a tile, so now their turn is over
+            this.setState(state => ({
+               endTurn: true
+            }));
+         }
 
-        }
+         render() {
+            return (
+               <div>
+                  <h1 className="title">Battleship</h1>
+                  <div id="container">
+                     <div>
+                        <h2>Your grid ({this.state.player1Turn ? 'P1' : 'P2'})</h2>
+                        <hr />
+                        {this.state.player1Turn
+                           ?
+                           <div>
+                              <StaticGrid player={this.state.player1} />
+                              <BoatList boats={this.state.player1.life} />
+                           </div>
+                           :
+                           <div>
+                              <StaticGrid player={this.state.player2} />
+                              <BoatList boats={this.state.player2.life} />
+                           </div>
+                        }
+                     </div>
+                     <div>
+                        <h2>Opponent ({this.state.player1Turn ? 'P2' : 'P1'})</h2>
+                        <hr />
+                        {this.state.player1Turn
+                           ?
+                           <div>
+                              {this.grid('player2', "opponent")}
+                              <BoatList boats={this.state.player2.life} />
+                           </div>
+                           :
+                           <div>
+                              {this.grid('player1', "opponent")}
+                              <BoatList boats={this.state.player1.life} />
+                           </div>
+                        }
+                     </div>
+                     <button className="button-big" disabled={!this.state.endTurn} onClick={this.switchTurns}>End Turn</button>
+                  </div>
+               </div>
+            );
+         }
 
-        ReactDOM.render(<App />, document.querySelector('#app'));
-        </script>
-    </body>
+         switchTurns = () => {
+            this.setState(state => ({
+               player1Turn: !state.player1Turn,
+               endTurn: false
+            }));
+         }
+
+      }
+
+      ReactDOM.render(<App />, document.querySelector('#app'));
+   </script>
+</body>
+
 </html>
