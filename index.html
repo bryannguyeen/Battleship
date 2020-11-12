@@ -172,7 +172,7 @@
                      <h1>Player 2</h1>
                      <hr />
                      {p2Stats}
-                     </div>
+                  </div>
                </div>
             )
          }
@@ -219,15 +219,42 @@
 
          generateBoatSet() {
             const boats = new Map();
+            var orientation
+            var row
+            var column
 
             // generating L boat
-            var row = Math.floor(Math.random() * 6)
-            var column = Math.floor(Math.random() * 7)
+            orientation = Math.floor(Math.random() * 4)
+            console.log(orientation)
+            if (orientation == 0 || orientation == 2) {
+               row = Math.floor(Math.random() * 6)
+               column = Math.floor(Math.random() * 7)
+            } else {
+               row = Math.floor(Math.random() * 7)
+               column = Math.floor(Math.random() * 6)
+            }
 
-            boats.set(8 * row + column, 'L')
-            boats.set(8 * (row + 1) + column, 'L')
-            boats.set(8 * (row + 2) + column, 'L')
-            boats.set(8 * (row + 2) + column + 1, 'L')
+            if (orientation == 0) {
+               boats.set(8 * (row) + (column), 'L')
+               boats.set(8 * (row + 1) + column, 'L')
+               boats.set(8 * (row + 2) + column, 'L')
+               boats.set(8 * (row + 2) + column + 1, 'L')
+            } else if (orientation == 1) {
+               boats.set(8 * (row + 1) + column, 'L')
+               boats.set(8 * (row + 1) + (column + 1), 'L')
+               boats.set(8 * (row + 1) + (column + 2), 'L')
+               boats.set(8 * (row) + (column + 2), 'L')
+            } else if (orientation == 2) {
+               boats.set(8 * (row) + (column), 'L')
+               boats.set(8 * (row) + (column + 1), 'L')
+               boats.set(8 * (row + 1) + (column + 1), 'L')
+               boats.set(8 * (row + 2) + (column + 1), 'L')
+            } else {
+               boats.set(8 * (row) + (column), 'L')
+               boats.set(8 * (row + 1) + (column), 'L')
+               boats.set(8 * (row) + (column + 1), 'L')
+               boats.set(8 * (row) + (column + 2), 'L')
+            }
 
             // generating box boat
             row = Math.floor(Math.random() * 7)
@@ -236,34 +263,42 @@
                row = Math.floor(Math.random() * 7)
                column = Math.floor(Math.random() * 7)
             }
-            boats.set(8 * row + column, 'Box')
-            boats.set(8 * (row +1) + column, 'Box')
-            boats.set(8 * row + (column + 1), 'Box')
+            boats.set(8 * (row) + (column), 'Box')
+            boats.set(8 * (row + 1) + (column), 'Box')
+            boats.set(8 * (row) + (column + 1), 'Box')
             boats.set(8 * (row + 1) + (column + 1), 'Box')
 
-            // generating first line boat
-            row = Math.floor(Math.random() * 5)
-            column = Math.floor(Math.random() * 8)
-            while (boats.has(8 * row + column) || boats.has(8 * (row + 1) + column) || boats.has(8 * (row + 2) + column) || boats.has(8 * (row + 3) + column)) {
-               row = Math.floor(Math.random() * 5)
-               column = Math.floor(Math.random() * 8)
-            }
-            boats.set(8 * row + column, 'Line1')
-            boats.set(8 * (row + 1) + column, 'Line1')
-            boats.set(8 * (row + 2) + column, 'Line1')
-            boats.set(8 * (row + 3) + column, 'Line1')
+            // generating the two line boats
+            for (let i = 0; i < 2; i++) {
+               orientation = Math.floor(Math.random() * 2)
+               if (orientation == 0) {
+                  row = Math.floor(Math.random() * 5)
+                  column = Math.floor(Math.random() * 8)
+                  while (boats.has(8 * row + column) || boats.has(8 * (row + 1) + column) || boats.has(8 * (row + 2) + column) || boats.has(8 * (row + 3) + column)) {
+                     row = Math.floor(Math.random() * 5)
+                     column = Math.floor(Math.random() * 8)
+                  }
 
-            // generating second line boat
-            row = Math.floor(Math.random() * 5)
-            column = Math.floor(Math.random() * 8)
-            while (boats.has(8 * row + column) || boats.has(8 * (row + 1) + column) || boats.has(8 * (row + 2) + column) || boats.has(8 * (row + 3) + column)) {
-               row = Math.floor(Math.random() * 5)
-               column = Math.floor(Math.random() * 8)
+                  boats.set(8 * (row) + (column), 'Line' + (i+1))
+                  boats.set(8 * (row + 1) + (column), 'Line' + (i+1))
+                  boats.set(8 * (row + 2) + (column), 'Line' + (i+1))
+                  boats.set(8 * (row + 3) + (column), 'Line' + (i+1))
+
+               } else {
+                  row = Math.floor(Math.random() * 8)
+                  column = Math.floor(Math.random() * 5)
+                  while (boats.has(8 * row + column) || boats.has(8 * row + (column + 1)) || boats.has(8 * row + (column + 2)) || boats.has(8 * row + (column + 3))) {
+                     row = Math.floor(Math.random() * 8)
+                     column = Math.floor(Math.random() * 5)
+                  }
+
+                  boats.set(8 * (row) + (column), 'Line' + (i+1))
+                  boats.set(8 * (row) + (column + 1), 'Line' + (i+1))
+                  boats.set(8 * (row) + (column + 2), 'Line' + (i+1))
+                  boats.set(8 * (row) + (column + 3), 'Line' + (i+1))
+
+               }
             }
-            boats.set(8 * row + column, 'Line2')
-            boats.set(8 * (row + 1) + column, 'Line2')
-            boats.set(8 * (row + 2) + column, 'Line2')
-            boats.set(8 * (row + 3) + column, 'Line2')
 
             return boats
          }
@@ -336,20 +371,20 @@
                      }
                   }
                }), () => {
-               // Check to see if player has any remaining boats after a successful hit
-               const playerHealth = this.state[playerID].life
-               if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
-                  var winner;
-                  if (playerID == "player1") {
-                     winner = "Player 2"
-                  } else {
-                     winner = "Player 1"
+                  // Check to see if player has any remaining boats after a successful hit
+                  const playerHealth = this.state[playerID].life
+                  if (playerHealth.L == 0 && playerHealth.Box == 0 && playerHealth.Line1 == 0 && playerHealth.Line2 == 0) {
+                     var winner;
+                     if (playerID == "player1") {
+                        winner = "Player 2"
+                     } else {
+                        winner = "Player 1"
+                     }
+                     this.setState(state => ({
+                        gameState: "game over",
+                        winner: winner
+                     }));
                   }
-                  this.setState(state => ({
-                     gameState: "game over",
-                     winner: winner
-                  }));
-               }
                });
             }
 
