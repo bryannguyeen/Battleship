@@ -285,8 +285,22 @@
                   }
                },
 
-               gameState: saveState.gameState
+               gameState: "transition"
             }));
+         }
+
+         saveGame = () => {
+            const saveState = JSON.parse(JSON.stringify(this.state))
+
+            // Since JSON does not support maps and sets, convert them to arrays
+            saveState.player1.boats = Array.from(this.state.player1.boats.entries())
+            saveState.player1.hits = Array.from(this.state.player1.hits)
+
+            saveState.player2.boats = Array.from(this.state.player2.boats.entries())
+            saveState.player2.hits = Array.from(this.state.player2.hits)
+
+
+            localStorage.setItem("state", JSON.stringify(saveState))
          }
 
          generateBoatSet() {
@@ -350,10 +364,10 @@
                      column = Math.floor(Math.random() * 8)
                   }
 
-                  boats.set(8 * (row) + (column), 'Line' + (i+1))
-                  boats.set(8 * (row + 1) + (column), 'Line' + (i+1))
-                  boats.set(8 * (row + 2) + (column), 'Line' + (i+1))
-                  boats.set(8 * (row + 3) + (column), 'Line' + (i+1))
+                  boats.set(8 * (row) + (column), 'Line' + (i + 1))
+                  boats.set(8 * (row + 1) + (column), 'Line' + (i + 1))
+                  boats.set(8 * (row + 2) + (column), 'Line' + (i + 1))
+                  boats.set(8 * (row + 3) + (column), 'Line' + (i + 1))
 
                } else {
                   row = Math.floor(Math.random() * 8)
@@ -363,10 +377,10 @@
                      column = Math.floor(Math.random() * 5)
                   }
 
-                  boats.set(8 * (row) + (column), 'Line' + (i+1))
-                  boats.set(8 * (row) + (column + 1), 'Line' + (i+1))
-                  boats.set(8 * (row) + (column + 2), 'Line' + (i+1))
-                  boats.set(8 * (row) + (column + 3), 'Line' + (i+1))
+                  boats.set(8 * (row) + (column), 'Line' + (i + 1))
+                  boats.set(8 * (row) + (column + 1), 'Line' + (i + 1))
+                  boats.set(8 * (row) + (column + 2), 'Line' + (i + 1))
+                  boats.set(8 * (row) + (column + 3), 'Line' + (i + 1))
 
                }
             }
@@ -455,6 +469,9 @@
                         gameState: "game over",
                         winner: winner
                      }));
+
+                     // remove finished game from localStorage
+                     localStorage.removeItem("state")
                   }
                });
             }
@@ -574,7 +591,9 @@
          startGame = () => {
             this.setState(state => ({
                gameState: "game"
-            }))
+            }), () => {
+               this.saveGame()
+            })
          }
 
          switchTurns = () => {
@@ -583,18 +602,7 @@
                endTurn: false,
                gameState: "transition"
             }), () => {
-               // Save game to local storage after every end-turn
-               const saveState = JSON.parse(JSON.stringify(this.state))
-
-               // Since JSON does not support maps and sets, convert them to arrays
-               saveState.player1.boats = Array.from(this.state.player1.boats.entries())
-               saveState.player1.hits = Array.from(this.state.player1.hits)
-
-               saveState.player2.boats = Array.from(this.state.player2.boats.entries())
-               saveState.player2.hits = Array.from(this.state.player2.hits)
-
-
-               localStorage.setItem("state", JSON.stringify(saveState))
+               this.saveGame()
             });
          }
 
